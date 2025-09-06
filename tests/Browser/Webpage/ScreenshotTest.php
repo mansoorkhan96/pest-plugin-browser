@@ -74,7 +74,7 @@ it('captures responsive screenshots with custom screen sizes', function (): void
         'sm' => ['width' => 640, 'height' => 360],
     ];
 
-    $page->responsiveScreenshots(filename: 'responsive-test', $responsiveScreenSizes);
+    $page->responsiveScreenshots(filename: 'responsive-test', responsiveScreenSizes: $responsiveScreenSizes);
 
     $devices = array_keys($responsiveScreenSizes);
 
