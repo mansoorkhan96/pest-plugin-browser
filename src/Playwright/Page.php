@@ -440,14 +440,20 @@ final class Page
 
     /**
      * Take a series of screenshots at different browser sizes to emulate different devices.
+     *
+     * @param  array<string, array{width: int, height: int}>  $responsiveScreenSizes
      */
-    public function responsiveScreenshots(string $filename): self
+    public function responsiveScreenshots(string $filename, array $responsiveScreenSizes = []): self
     {
         if (mb_substr($filename, -1) !== '/') {
             $filename .= '-';
         }
 
-        foreach ($this->responsiveScreenSizes() as $device => $size) {
+        if ($responsiveScreenSizes === []) {
+            $responsiveScreenSizes = $this->responsiveScreenSizes();
+        }
+
+        foreach ($responsiveScreenSizes as $device => $size) {
             $this->setViewportSize($size['width'], $size['height'])
                 ->screenshot(filename: "$filename$device");
         }
