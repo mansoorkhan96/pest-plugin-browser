@@ -439,6 +439,23 @@ final class Page
     }
 
     /**
+     * Take a series of screenshots at different browser sizes to emulate different devices.
+     */
+    public function responsiveScreenshots(string $filename): self
+    {
+        if (mb_substr($filename, -1) !== '/') {
+            $filename .= '-';
+        }
+
+        foreach ($this->responsiveScreenSizes() as $device => $size) {
+            $this->setViewportSize($size['width'], $size['height'])
+                ->screenshot(filename: "$filename$device");
+        }
+
+        return $this;
+    }
+
+    /**
      * Make screenshot of a specific element.
      */
     public function screenshotElement(string $selector, ?string $filename = null): string
@@ -659,6 +676,41 @@ final class Page
             'caret' => 'hide',
             'animations' => 'disabled',
             'scale' => 'css',
+        ];
+    }
+
+    /**
+     * Returns the responsive screen sizes.
+     *
+     * @return array<string, array{width: int, height: int}>
+     */
+    private function responsiveScreenSizes(): array
+    {
+        return [
+            'xs' => [
+                'width' => 360,
+                'height' => 640,
+            ],
+            'sm' => [
+                'width' => 640,
+                'height' => 360,
+            ],
+            'md' => [
+                'width' => 768,
+                'height' => 1024,
+            ],
+            'lg' => [
+                'width' => 1024,
+                'height' => 768,
+            ],
+            'xl' => [
+                'width' => 1280,
+                'height' => 1024,
+            ],
+            '2xl' => [
+                'width' => 1536,
+                'height' => 864,
+            ],
         ];
     }
 
