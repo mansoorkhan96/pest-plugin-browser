@@ -43,7 +43,7 @@ it('captures a screenshot of an specific element', function (): void {
         ->toBeTrue();
 });
 
-it('captures responsive screenshots', function (): void {
+it('captures responsive screenshots', function (string $device): void {
     Route::get('/', fn (): string => '<div>
         <h1>Responsive Screenshot Test</h1>
         <p>This page will be captured at different screen sizes</p>
@@ -53,13 +53,9 @@ it('captures responsive screenshots', function (): void {
 
     $page->responsiveScreenshots(filename: 'responsive-test');
 
-    $devices = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-
-    foreach ($devices as $device) {
-        expect(file_exists(Screenshot::path("responsive-test-{$device}.png")))
-            ->toBeTrue();
-    }
-});
+    expect(file_exists(Screenshot::path("responsive-test-{$device}.png")))
+        ->toBeTrue();
+})->with(['xs', 'sm', 'md', 'lg', 'xl', '2xl']);
 
 it('captures responsive screenshots with custom screen sizes', function (): void {
     Route::get('/', fn (): string => '<div>
