@@ -159,4 +159,3 @@ it('can double click to select text content', function (): void {
     $page->doubleClick('#selectable');
     $page->assertSeeIn('#result', 'selected');
 });
-
