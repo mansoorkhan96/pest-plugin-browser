@@ -145,3 +145,18 @@ it('can double click on different element types', function (string $element): vo
     '<input type="radio" id="clickable" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"></input>',
     '<a id="clickable" href="#" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'">Button</a>',
 ]);
+
+it('can double click to select text content', function (): void {
+    Route::get('/', fn (): string => '
+        <p id="selectable" onmouseup="document.getElementById(\'result\').textContent = window.getSelection().toString();">
+            This is some selectable text content that can be selected
+        </p>
+        <p id="result"></p>
+    ');
+
+    $page = visit('/');
+
+    $page->doubleClick('#selectable');
+    $page->assertSeeIn('#result', 'selected');
+});
+
