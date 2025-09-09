@@ -93,3 +93,19 @@ test('click may accept options', function (): void {
     $page->click('#button', options: ['clickCount' => 2]);
     $page->assertSeeIn('#result', 'Option-2 clicked');
 });
+
+it('can double click an element', function (): void {
+    Route::get('/', fn (): string => '
+    <p id="result"></p>
+    <button
+        id="button"
+        ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"
+    >
+        Double Click Me
+    </button>');
+
+    $page = visit('/');
+
+    $page->doubleClick('#button');
+    $page->assertSeeIn('#result', 'Double Clicked');
+});
