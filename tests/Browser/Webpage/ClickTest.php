@@ -109,3 +109,18 @@ it('can double click an element', function (): void {
     $page->doubleClick('#button');
     $page->assertSeeIn('#result', 'Double Clicked');
 });
+
+it('can double click an element with text selector', function (): void {
+    Route::get('/', fn (): string => '
+    <p id="result"></p>
+    <div
+        ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"
+    >
+        Double Click Me
+    </div>');
+
+    $page = visit('/');
+
+    $page->doubleClick('Double Click Me');
+    $page->assertSeeIn('#result', 'Double Clicked');
+});
