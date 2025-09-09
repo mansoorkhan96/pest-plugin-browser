@@ -124,3 +124,24 @@ it('can double click an element with text selector', function (): void {
     $page->doubleClick('Double Click Me');
     $page->assertSeeIn('#result', 'Double Clicked');
 });
+
+it('can double click on different element types', function (string $element): void {
+    Route::get('/', fn (): string => "
+        <p id=\"result\"></p>
+        $element
+    ");
+
+    $page = visit('/');
+
+    $page->doubleClick('#clickable');
+    $page->assertSeeIn('#result', 'Double Clicked');
+})->with([
+    '<button id="clickable" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"></button>',
+    '<div id="clickable" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'">Button</div>',
+    '<input type="button" id="clickable" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"></input>',
+    '<input type="submit" id="clickable" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"></input>',
+    '<input type="reset" id="clickable" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"></input>',
+    '<input type="checkbox" id="clickable" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"></input>',
+    '<input type="radio" id="clickable" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'"></input>',
+    '<a id="clickable" href="#" ondblclick="document.getElementById(\'result\').textContent = \'Double Clicked\'">Button</a>',
+]);
