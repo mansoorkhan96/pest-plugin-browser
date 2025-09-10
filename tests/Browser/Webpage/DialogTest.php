@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use Pest\Browser\Playwright\Dialog;
 use PHPUnit\Framework\ExpectationFailedException;
 
 it('can handle alert dialog with custom handler', function (): void {
@@ -11,20 +12,15 @@ it('can handle alert dialog with custom handler', function (): void {
         <div id="result"></div>
     ');
 
-    $dialogHandled = false;
-    $dialogMessage = '';
-
-    $page = visit('/')->onDialog(function ($dialog) use (&$dialogHandled, &$dialogMessage) {
-        $dialogHandled = true;
-        $dialogMessage = $dialog->message();
+    $page = visit('/')->onDialog(function (Dialog $dialog) {
         expect($dialog->type())->toBe('alert');
+        expect($dialog->message())->toBe('Hello World!');
+
         $dialog->accept();
     });
 
     $page->click('#alert-btn');
 
-    expect($dialogHandled)->toBeTrue();
-    expect($dialogMessage)->toBe('Hello World!');
     expect($page->text('#result'))->toBe('Alert handled');
 });
 
@@ -46,7 +42,7 @@ it('can not auto dismiss dialog when interupted', function (): void {
     ');
 
     $page = visit('/')
-        ->onDialog(function ($dialog) {
+        ->onDialog(function (Dialog $dialog) {
             //
         });
 
