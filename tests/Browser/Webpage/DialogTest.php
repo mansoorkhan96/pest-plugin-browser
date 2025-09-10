@@ -26,3 +26,15 @@ it('can handle alert dialog with custom handler', function (): void {
     expect($dialogMessage)->toBe('Hello World!');
     expect($page->text('#result'))->toBe('Alert handled');
 });
+
+it('can auto dismiss dialog', function (): void {
+    Route::get('/', fn (): string => '
+        <button id="alert-btn" onclick="alert(\'Hello World!\');">Show Alert</button>
+        <p>Normal text on page.</p>
+    ');
+
+    $page = visit('/');
+
+    $page->assertSee('Normal text on page.');
+});
+
