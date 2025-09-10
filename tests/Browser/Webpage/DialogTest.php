@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\ExpectationFailedException;
 
 it('can handle alert dialog with custom handler', function (): void {
     Route::get('/', fn (): string => '
@@ -37,4 +38,18 @@ it('can auto dismiss dialog', function (): void {
 
     $page->assertSee('Normal text on page.');
 });
+
+it('can not auto dismiss dialog when interupted', function (): void {
+    Route::get('/', fn (): string => '
+        <button id="alert-btn" onclick="alert(\'Hello World!\');">Show Alert</button>
+        <p>Normal text on page.</p>
+    ');
+
+    $page = visit('/')
+        ->onDialog(function ($dialog) {
+            //
+        });
+
+    $page->click('#alert-btn');
+})->throws(ExpectationFailedException::class);
 
