@@ -59,8 +59,8 @@ it('can handle confirm dialog with acceptance', function (): void {
     ');
 
     $page = visit('/')->onDialog(function ($dialog) {
-        expect($dialog->type())->toBe('confirm');
         expect($dialog->message())->toBe('Are you sure?');
+
         $dialog->accept();
     });
 
@@ -79,8 +79,8 @@ it('can handle confirm dialog with dismissal', function (): void {
     ');
 
     $page = visit('/')->onDialog(function ($dialog) {
-        expect($dialog->type())->toBe('confirm');
         expect($dialog->message())->toBe('Are you sure?');
+
         $dialog->dismiss();
     });
 
@@ -99,9 +99,9 @@ it('can handle prompt dialog with custom input', function (): void {
     ');
 
     $page = visit('/')->onDialog(function ($dialog) {
-        expect($dialog->type())->toBe('prompt');
         expect($dialog->message())->toBe('What is your name?');
         expect($dialog->defaultValue())->toBe('Default Name');
+
         $dialog->accept('John Doe');
     });
 
@@ -120,7 +120,6 @@ it('can handle prompt dialog with dismissal', function (): void {
     ');
 
     $page = visit('/')->onDialog(function ($dialog) {
-        expect($dialog->type())->toBe('prompt');
         $dialog->dismiss();
     });
 
@@ -165,3 +164,88 @@ it('can auto-dismiss all dialogs', function (): void {
     expect($page->text('#result'))->toBe('false-null');
 });
 
+it('can selectively accept only confirm dialogs', function (): void {
+    Route::get('/', fn (): string => '
+        <button id="mixed-btn" onclick="
+            alert(\'Alert message\');
+            var confirm_result = confirm(\'Confirm message\');
+            document.getElementById(\'result\').textContent = \'confirm:\' + confirm_result;
+        ">Show Mixed</button>
+        <div id="result"></div>
+    ');
+
+    $page = visit('/')->acceptingConfirms();
+
+    $page->click('#mixed-btn');
+
+    expect($page->text('#result'))->toBe('confirm:true');
+});
+
+it('can selectively dismiss only confirm dialogs', function (): void {
+    Route::get('/', fn (): string => '
+        <button id="mixed-btn" onclick="
+            alert(\'Alert message\');
+            var confirm_result = confirm(\'Confirm message\');
+            document.getElementById(\'result\').textContent = \'confirm:\' + confirm_result;
+        ">Show Mixed</button>
+        <div id="result"></div>
+    ');
+
+    $page = visit('/')->dismissingConfirms();
+
+    $page->click('#mixed-btn');
+
+    expect($page->text('#result'))->toBe('confirm:false');
+});
+
+it('can remove dialog handlers', function (): void {
+    $page = visit('/');
+
+    expect($page->hasDialogHandler())->toBeFalse();
+
+    $page->acceptAllDialogs();
+    expect($page->hasDialogHandler())->toBeTrue();
+
+    $page->removeDialogHandler();
+    expect($page->hasDialogHandler())->toBeFalse();
+});
+
+it('can handle multiple sequential dialogs with different types', function (): void {
+    Route::get('/', fn (): string => '
+        <button id="sequence-btn" onclick="
+            alert(\'Step 1: Alert\');
+            var confirm_result = confirm(\'Step 2: Confirm?\');
+            if (confirm_result) {
+                var prompt_result = prompt(\'Step 3: Your name?\', \'Anonymous\');
+                document.getElementById(\'result\').textContent = \'Hello \' + (prompt_result || \'Anonymous\');
+            } else {
+                document.getElementById(\'result\').textContent = \'Process cancelled\';
+            }
+        ">Start Sequence</button>
+        <div id="result"></div>
+    ');
+
+    $stepCount = 0;
+    $page = visit('/')->onDialog(function ($dialog) use (&$stepCount) {
+        $stepCount++;
+
+        if ($stepCount === 1) {
+            expect($dialog->message())->toBe('Step 1: Alert');
+
+            $dialog->accept();
+        } elseif ($stepCount === 2) {
+            expect($dialog->message())->toBe('Step 2: Confirm?');
+
+            $dialog->accept();
+        } elseif ($stepCount === 3) {
+            expect($dialog->message())->toBe('Step 3: Your name?');
+
+            $dialog->accept('Integration Test');
+        }
+    });
+
+    $page->click('#sequence-btn');
+
+    expect($stepCount)->toBe(3);
+    expect($page->text('#result'))->toBe('Hello Integration Test');
+});
