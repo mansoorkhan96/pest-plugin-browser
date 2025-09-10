@@ -12,7 +12,9 @@ it('can handle alert dialog with custom handler', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->onDialog(function (Dialog $dialog): void {
+    $page = visit('/');
+
+    $page->onDialog(function (Dialog $dialog): void {
         expect($dialog->type())->toBe('alert');
         expect($dialog->message())->toBe('Hello World!');
 
@@ -41,10 +43,11 @@ it('can not auto dismiss dialog when interupted', function (): void {
         <p>Normal text on page.</p>
     ');
 
-    $page = visit('/')
-        ->onDialog(function (Dialog $dialog): void {
-            //
-        });
+    $page = visit('/');
+
+    $page->onDialog(function (Dialog $dialog): void {
+        //
+    });
 
     $page->click('#alert-btn');
 })->throws(ExpectationFailedException::class);
@@ -58,7 +61,9 @@ it('can handle confirm dialog with acceptance', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->onDialog(function (Dialog $dialog): void {
+    $page = visit('/');
+
+    $page->onDialog(function (Dialog $dialog): void {
         expect($dialog->message())->toBe('Are you sure?');
 
         $dialog->accept();
@@ -78,7 +83,9 @@ it('can handle confirm dialog with dismissal', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->onDialog(function (Dialog $dialog): void {
+    $page = visit('/');
+
+    $page->onDialog(function (Dialog $dialog): void {
         expect($dialog->message())->toBe('Are you sure?');
 
         $dialog->dismiss();
@@ -98,7 +105,9 @@ it('can handle prompt dialog with custom input', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->onDialog(function (Dialog $dialog): void {
+    $page = visit('/');
+
+    $page->onDialog(function (Dialog $dialog): void {
         expect($dialog->message())->toBe('What is your name?');
         expect($dialog->defaultValue())->toBe('Default Name');
 
@@ -119,7 +128,9 @@ it('can handle prompt dialog with dismissal', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->onDialog(function (Dialog $dialog): void {
+    $page = visit('/');
+
+    $page->onDialog(function (Dialog $dialog): void {
         $dialog->dismiss();
     });
 
@@ -139,7 +150,9 @@ it('can auto-accept all dialogs', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->acceptAllDialogs('Test User');
+    $page = visit('/');
+
+    $page->acceptAllDialogs('Test User');
 
     $page->click('#multi-btn');
 
@@ -157,7 +170,9 @@ it('can auto-dismiss all dialogs', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->dismissAllDialogs();
+    $page = visit('/');
+
+    $page->dismissAllDialogs();
 
     $page->click('#multi-btn');
 
@@ -174,7 +189,9 @@ it('can selectively accept only confirm dialogs', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->acceptingConfirms();
+    $page = visit('/');
+
+    $page->acceptingConfirms();
 
     $page->click('#mixed-btn');
 
@@ -191,7 +208,9 @@ it('can selectively dismiss only confirm dialogs', function (): void {
         <div id="result"></div>
     ');
 
-    $page = visit('/')->dismissingConfirms();
+    $page = visit('/');
+
+    $page->dismissingConfirms();
 
     $page->click('#mixed-btn');
 
@@ -226,7 +245,9 @@ it('can handle multiple sequential dialogs with different types', function (): v
     ');
 
     $stepCount = 0;
-    $page = visit('/')->onDialog(function (Dialog $dialog) use (&$stepCount): void {
+    $page = visit('/');
+
+    $page->onDialog(function (Dialog $dialog) use (&$stepCount): void {
         $stepCount++;
 
         if ($stepCount === 1) {
