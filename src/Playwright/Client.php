@@ -92,6 +92,7 @@ final class Client
         $this->websocketConnection->sendText($requestJson);
 
         while (true) {
+            // @phpstan-ignore-next-line
             $responseJson = $this->fetch($this->websocketConnection);
 
             /** @var array{id: string|null, method?: string, params: array{add: string|null, type: string|null, guid: string|null, initializer: array{type: string, message: string, defaultValue: string}|null }, error: array{error: array{message: string|null}}} $response */
