@@ -583,6 +583,7 @@ final class Page
             'event' => 'dialog',
             'enabled' => true,
         ]);
+
         $this->processVoidResponse($response);
     }
 
@@ -597,6 +598,7 @@ final class Page
             'event' => 'dialog',
             'enabled' => false,
         ]);
+
         $this->processVoidResponse($response);
     }
 

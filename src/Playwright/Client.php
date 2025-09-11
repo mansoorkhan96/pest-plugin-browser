@@ -108,7 +108,6 @@ final class Client
                 throw new ExpectationFailedException($message);
             }
 
-            // Handle dialog creation
             if (isset($response['method']) && $response['method'] === '__create__'
                 && isset($response['params']['type']) && $response['params']['type'] === 'Dialog'
                 && isset($response['params']['guid'], $response['params']['initializer'])) {

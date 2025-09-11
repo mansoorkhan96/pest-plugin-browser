@@ -43,7 +43,7 @@ final readonly class Dialog
     }
 
     /**
-     * Returns the dialog's type (alert, confirm, prompt, beforeunload).
+     * Returns the dialog's type (alert, confirm, prompt).
      */
     public function type(): string
     {
@@ -51,7 +51,7 @@ final readonly class Dialog
     }
 
     /**
-     * Returns the dialog's default value (for prompt dialogs).
+     * Returns the dialog's default value for prompt dialogs.
      */
     public function defaultValue(): string
     {
@@ -60,7 +60,6 @@ final readonly class Dialog
 
     /**
      * Accepts the dialog.
-     * For prompt dialogs, you can provide text input.
      */
     public function accept(?string $promptText = null): void
     {
