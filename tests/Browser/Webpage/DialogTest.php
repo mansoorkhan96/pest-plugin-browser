@@ -296,3 +296,19 @@ it('can handle multiple sequential dialogs with different types', function (): v
     expect($stepCount)->toBe(3);
     expect($page->text('#result'))->toBe('Hello Integration Test');
 });
+
+it('can handle dialog expectation failure', function (): void {
+    Route::get('/', fn (): string => '
+        <button id="confirm-btn" onclick="confirm(\'Are you sure?\');">Show Confirm</button>
+    ');
+
+    $page = visit('/');
+
+    $page->onDialog(function (Dialog $dialog): void {
+        expect($dialog->message())->toBe('Wrong text');
+
+        $dialog->accept();
+    });
+
+    $page->click('Show Confirm');
+})->throws(ExpectationFailedException::class);

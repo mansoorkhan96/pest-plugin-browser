@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pest\Browser\Playwright;
 
 use Closure;
+use Exception;
 use Generator;
 use Pest\Browser\Execution;
 use Pest\Browser\Support\ImageDiffView;
@@ -624,7 +625,13 @@ final class Page
     public function handleDialogEvent(Dialog $dialog): void
     {
         if ($this->dialogHandler instanceof Closure) {
-            ($this->dialogHandler)($dialog);
+            try {
+                ($this->dialogHandler)($dialog);
+            } catch (Exception $e) {
+                $dialog->dismiss();
+
+                throw $e;
+            }
         }
     }
 
